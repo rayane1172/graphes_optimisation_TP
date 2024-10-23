@@ -5,12 +5,18 @@ exit_program = False
 mon_graph = Graph()
 
 
+# test_graph = {
+#     "A": ["B", "E"],
+#     "B": ["C", "A","D"],
+#     "C": ["B","E"],
+#     "D": ["B"],
+#     "E": ["A","C"]
+# }
 test_graph = {
-    "A": ["B", "E"],
-    "B": ["C", "A","D"],
-    "C": ["B","E"],
-    "D": ["B"],
-    "E": ["A","C"]
+    "A": ["B", "C","D"],
+    "B": ["A"],
+    "C": ["A"],
+    "D": ["A"],
 }
 
 test_graph_is_tree = {
@@ -31,6 +37,9 @@ print("-"*15)
 test_graph_is_tree.display_graph()
 print(test_graph_is_tree.BFS(start_node="A"))
 print(test_graph_is_tree.is_tree())
+
+test_graph.fermeture_transitive().display_graph()
+
 # while not exit_program:
 #     print("Donner moi votre graphe d'abord ".center(20, "*"))
 #     n = int(input("Donner moi le nombre de nœuds -> "))

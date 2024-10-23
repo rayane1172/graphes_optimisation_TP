@@ -24,6 +24,8 @@ class Graph:
       for node, neighbors in self.graph.items():
          print(f"{node} : {neighbors}")
 
+
+#todo //////////////////////////////////////////////////////////////////
    def BFS(self, start_node):
       laFile = deque()
       ordered_list = []
@@ -61,7 +63,6 @@ class Graph:
       print(f"ordered list -> {ordered_list}")
       return visited
 
-
 # todo: ////////////////////////////////////////////////////////
 
    def is_tree(self):
@@ -86,8 +87,8 @@ class Graph:
                if not DFS(voisin, node):
                   return False
             elif voisin != parent: #todo -->  bcz of graph indirectionnel -> verification des cycles
-               return False
-         return True
+               return False # there is a cycle
+         return True # sans cycle
 
       first_node = list(self.graph.keys())[0] # first case of list of nodes (keys) : so first node in graph
       if not DFS(first_node,None):
@@ -97,18 +98,25 @@ class Graph:
          return False
 
 
+   def fermeture_transitive(self):
+      print("\tFermeture Transitive du graphe est : ")
+      new_graph = Graph(self.graph)
+
+      for node in self.graph:
+         stack = list(self.graph[node])
+         # visited = set()
+         while stack:
+            current = stack.pop()
+            # if current not in visited:
+            #    visited.add(current)
+            for voisin in self.graph[current]:
+               if voisin not in self.graph[node]:
+                  new_graph.add_edge(node,voisin)
+      return new_graph
 
 
 
-
-
-
-
-
-
-
-
-      # def dfs2(self, start_node): # not completted 
+      # def dfs2(self, start_node): # not completed 
       #    stack = [] # empty stack
       #    stack.append(start_node)
       #    ordered_list = []
