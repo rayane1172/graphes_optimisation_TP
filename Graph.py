@@ -1,5 +1,6 @@
 from collections import deque
-
+import networkx as nx
+import matplotlib.pyplot as plt
 
 class Graph:
    def __init__(self, graph_dict=None):
@@ -26,12 +27,11 @@ class Graph:
 
 
 #todo //////////////////////////////////////////////////////////////////
+
    def BFS(self, start_node):
       laFile = deque()
       ordered_list = []
       laFile.append(start_node)
-
-
       visited = {node: -1 for node in self.graph} # all values with -1
       visited[start_node] = 0
 
@@ -79,14 +79,14 @@ class Graph:
       if edge_nbr != nbr - 1: # nbr arcs < node - 1
          return False
 
-      visited = set() # track visited node
-      def DFS(node, parent): # cherche for cycles
+      visited = set()
+      def DFS(node, parent): # chercher for cycles
          visited.add(node)
          for voisin in self.graph[node]:
             if voisin not in visited:
                if not DFS(voisin, node):
                   return False
-            elif voisin != parent: #todo -->  bcz of graph indirectionnel -> verification des cycles
+            elif voisin != parent: #todo -->  bcz of graph indirectionnel -> verification des cycles (if the source is not from the last parent only )
                return False # there is a cycle
          return True # sans cycle
 
@@ -115,8 +115,69 @@ class Graph:
       return new_graph
 
 
+#function to showing graph
+   def visualize(self, color_assignment=None):
+      G = nx.Graph()
+      for node, neighbors in self.graph.items():
+         for neighbor in neighbors:
+            G.add_edge(node, neighbor)
+      pos = nx.spring_layout(G)
+      # If color assignment is provided, use it; otherwise, use default colors
+      if color_assignment:
+         colors = [color_assignment[node] for node in G.nodes()]
+      else:
+         colors = "skyblue"  # Default color
 
-      # def dfs2(self, start_node): # not completed 
+      nx.draw(G, pos, with_labels=True, node_size=500, node_color=colors, font_size=10, font_weight="bold", edge_color="grey")
+      plt.show()
+
+
+# todo -> print graph
+
+   def visualize(self, color_assignment=None):
+      G = nx.Graph()
+      for node, neighbors in self.graph.items():
+         for neighbor in neighbors:
+            G.add_edge(node, neighbor)
+
+      pos = nx.spring_layout(G)
+
+      # If color assignment is provided, use it; otherwise, use default colors
+      if color_assignment:
+         colors = [color_assignment.get(node, -1) for node in G.nodes()]
+      else:
+         colors = "skyblue"  # Default color
+
+      nx.draw(G, pos, with_labels=True, node_size=500, node_color=colors, font_size=10, font_weight="bold", edge_color="grey")
+      plt.show()
+
+
+# todo -> welsh and powel algorithm
+
+   def welsh_powell(self):
+      # Step 1: Sort nodes by degree in decreasing order
+      sorted_nodes = sorted(self.graph, key=lambda node: len(self.graph[node]), reverse=True)
+
+      color_assignment = {}  # Dictionary to store the color assigned to each vertex
+      color = 0  # Initialize color counter
+
+      # Step 2: Process each node
+      while sorted_nodes:
+         # Pick the first node and assign a color
+         current_node = sorted_nodes.pop(0)
+         color_assignment[current_node] = color  # Assign color to the current node
+
+         # Step 3: Remove all adjacent nodes from sorted_nodes
+         # Create a new list excluding adjacent nodes
+         sorted_nodes = [node for node in sorted_nodes if current_node not in self.graph[node]]
+         # Increment color counter
+         color += 1
+
+      self.visualize(color_assignment)
+      return color_assignment
+
+
+      # def dfs2(self, start_node): # not completed
       #    stack = [] # empty stack
       #    stack.append(start_node)
       #    ordered_list = []
@@ -141,4 +202,6 @@ class Graph:
       #       if inacessible:
       #          print(f"node { start_node} incaccessible ")
       #    return visited
-      return True
+      # return True
+      
+      
