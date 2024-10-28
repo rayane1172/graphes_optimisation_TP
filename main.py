@@ -27,11 +27,22 @@ test_graph_is_tree = {
     "E": ["B"]
 }
 test_graph_dict = {
-        "A": ["B", "E"],
-        "B": ["C", "A", "D"],
-        "C": ["B", "E"],
-        "D": ["B"],
-        "E": ["A", "C"]
+        "A": ["B", "C", "D", "E"],
+    "B": ["A", "C", "F"],
+    "C": ["A", "B", "G", "H"],
+    "D": ["A", "E", "I"],
+    "E": ["A", "D", "J"],
+    "F": ["B", "G", "K"],
+    "G": ["C", "F", "L", "H"],
+    "H": ["C", "G", "M", "N"],
+    "I": ["D", "J", "O"],
+    "J": ["E", "I", "P"],
+    "K": ["F", "L"],
+    "L": ["G", "K", "M"],
+    "M": ["H", "L", "N"],
+    "N": ["H", "M"],
+    "O": ["I", "P"],
+    "P": ["J", "O"]
     }
 
 test_graph = Graph(test_graph)
@@ -45,18 +56,17 @@ test_graph_dict = Graph(test_graph_dict)
 
 print("-"*15)
 
-test_graph2.display_graph()
 
-print(test_graph2.BFS(start_node="A"))
+print(test_graph_dict.BFS(start_node="A"))
+print(f"Est ce que le graphe est un ARBRE ? -> {test_graph_dict.is_tree()}")
 
-print(f"Est ce que le graphe est un ARBRE ? -> {test_graph.is_tree()}")
+# test_graph_dict.fermeture_transitive().display_graph()
+print("-"*15)
 
-test_graph2.fermeture_transitive().display_graph()
-test_graph2.visualize()
-test_graph2.welsh_powell()
-
-color_assignment = test_graph.welsh_powell()
-print("Color assignment:", color_assignment)
+test_graph_dict.visualize()
+# test_graph_is_tree.fermeture_transitive().visualize()
+color_assignment = test_graph_dict.welsh_powell()
+print("Color assignment length:", color_assignment)
 
 # while not exit_program:
 #     print("Donner moi votre graphe d'abord ".center(20, "*"))

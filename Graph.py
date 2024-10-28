@@ -99,7 +99,7 @@ class Graph:
 
 
    def fermeture_transitive(self):
-      print("\tFermeture Transitive du graphe est : ")
+      # print("\tFermeture Transitive du graphe est : ")
       new_graph = Graph(self.graph)
 
       for node in self.graph:
@@ -155,24 +155,28 @@ class Graph:
 # todo -> welsh and powel algorithm
 
    def welsh_powell(self):
-      # Step 1: Sort nodes by degree in decreasing order
+   # Trier les nœuds par degré décroissant
       sorted_nodes = sorted(self.graph, key=lambda node: len(self.graph[node]), reverse=True)
 
-      color_assignment = {}  # Dictionary to store the color assigned to each vertex
-      color = 0  # Initialize color counter
+      color_assignment = {}  # Dictionnaire pour stocker la couleur assignée à chaque nœud
+      color = 0  # Compteur de couleurs
 
-      # Step 2: Process each node
-      while sorted_nodes:
-         # Pick the first node and assign a color
-         current_node = sorted_nodes.pop(0)
-         color_assignment[current_node] = color  # Assign color to the current node
+      # Processus de coloration
+      for node in sorted_nodes:
+         # Trouver les couleurs utilisées par les voisins
+         neighbor_colors = {color_assignment[neighbor] for neighbor in self.graph[node] if neighbor in color_assignment}
 
-         # Step 3: Remove all adjacent nodes from sorted_nodes
-         # Create a new list excluding adjacent nodes
-         sorted_nodes = [node for node in sorted_nodes if current_node not in self.graph[node]]
-         # Increment color counter
-         color += 1
+         # Trouver la première couleur disponible
+         while color in neighbor_colors:
+               color += 1
 
+         # Assigner la couleur trouvée au nœud actuel
+         color_assignment[node] = color
+
+         # Réinitialiser la couleur pour le prochain nœud
+         color = 0
+
+      # Visualiser le graphe avec les couleurs assignées
       self.visualize(color_assignment)
       return color_assignment
 
