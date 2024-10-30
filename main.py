@@ -45,10 +45,71 @@ test_graph_dict = {
     "P": ["J", "O"]
     }
 
+afrique_graph = {
+    "Algerie": ["Tunisie", "Libye", "Niger", "Mali", "Mauritanie", "Maroc"],
+    "Angola": ["Namibie", "Congo-Brazzaville", "Zambie"],
+    "Benin": ["Togo", "Burkina Faso", "Niger", "Nigeria"],
+    "Botswana": ["Namibie", "Afrique du Sud", "Zimbabwe", "Zambie"],
+    "Burkina Faso": ["Mali", "Niger", "Benin", "Togo", "Ghana", "Cote d'Ivoire"],
+    "Burundi": ["Rwanda", "Tanzanie", "Republique Democratique du Congo"],
+    "Cameroun": ["Nigeria", "Tchad", "Republique Centrafricaine", "Congo-Brazzaville", "Gabon", "Guinee Equatoriale"],
+    "Cap-Vert": [],
+    "Republique Centrafricaine": ["Tchad", "Soudan", "Soudan du Sud", "Republique Democratique du Congo", "Cameroun"],
+    "Tchad": ["Libye", "Soudan", "Republique Centrafricaine", "Cameroun", "Nigeria", "Niger"],
+    "Comores": [],
+    "Congo-Brazzaville": ["Cameroun", "Republique Centrafricaine", "Republique Democratique du Congo", "Gabon", "Angola"],
+    "Republique Democratique du Congo": ["Republique Centrafricaine", "Soudan du Sud", "Ouganda", "Rwanda", "Burundi", "Tanzanie", "Zambie", "Angola", "Congo-Brazzaville"],
+    "Djibouti": ["Erythree", "Ethiopie", "Somalie"],
+    "Egypte": ["Libye", "Soudan"],
+    "Guinee Equatoriale": ["Cameroun", "Gabon"],
+    "Erythree": ["Soudan", "Ethiopie", "Djibouti"],
+    "Eswatini": ["Afrique du Sud", "Mozambique"],
+    "Ethiopie": ["Erythree", "Djibouti", "Somalie", "Kenya", "Soudan du Sud", "Soudan"],
+    "Gabon": ["Guinee Equatoriale", "Cameroun", "Congo-Brazzaville"],
+    "Gambie": ["Senegal"],
+    "Ghana": ["Cote d'Ivoire", "Burkina Faso", "Togo"],
+    "Guinee": ["Senegal", "Mali", "Cote d'Ivoire", "Liberia", "Sierra Leone"],
+    "Guinee-Bissau": ["Senegal", "Guinee"],
+    "Cote d'Ivoire": ["Liberia", "Guinee", "Mali", "Burkina Faso", "Ghana"],
+    "Kenya": ["Ouganda", "Tanzanie", "Somalie", "Soudan du Sud", "Ethiopie"],
+    "Lesotho": ["Afrique du Sud"],
+    "Liberia": ["Sierra Leone", "Guinee", "Cote d'Ivoire"],
+    "Libye": ["Egypte", "Soudan", "Tchad", "Niger", "Algerie", "Tunisie"],
+    "Madagascar": [],
+    "Malawi": ["Zambie", "Tanzanie", "Mozambique"],
+    "Mali": ["Algerie", "Niger", "Burkina Faso", "Cote d'Ivoire", "Guinee", "Senegal", "Mauritanie"],
+    "Maroc": ["Algerie"],
+    "Mauritanie": ["Senegal", "Mali", "Algerie"],
+    "Maurice": [],
+    "Mozambique": ["Malawi", "Zambie", "Zimbabwe", "Afrique du Sud", "Eswatini", "Tanzanie"],
+    "Namibie": ["Angola", "Zambie", "Botswana", "Afrique du Sud"],
+    "Niger": ["Libye", "Tchad", "Nigeria", "Benin", "Burkina Faso", "Mali", "Algerie"],
+    "Nigeria": ["Benin", "Niger", "Tchad", "Cameroun"],
+    "Ouganda": ["Soudan du Sud", "Kenya", "Tanzanie", "Rwanda", "Republique Democratique du Congo"],
+    "Rwanda": ["Ouganda", "Tanzanie", "Burundi", "Republique Democratique du Congo"],
+    "Sao Tome-et-Principe": [],
+    "Senegal": ["Mauritanie", "Mali", "Guinee", "Guinee-Bissau", "Gambie"],
+    "Seychelles": [],
+    "Sierra Leone": ["Guinee", "Liberia"],
+    "Somalie": ["Djibouti", "Ethiopie", "Kenya"],
+    "Afrique du Sud": ["Namibie", "Botswana", "Zimbabwe", "Mozambique", "Lesotho", "Eswatini"],
+    "Soudan": ["Egypte", "Libye", "Tchad", "Republique Centrafricaine", "Soudan du Sud", "Ethiopie", "Erythree"],
+    "Soudan du Sud": ["Soudan", "Republique Centrafricaine", "Republique Democratique du Congo", "Ouganda", "Kenya", "Ethiopie"],
+    "Tanzanie": ["Ouganda", "Rwanda", "Burundi", "Republique Democratique du Congo", "Zambie", "Malawi", "Mozambique", "Kenya"],
+    "Togo": ["Ghana", "Burkina Faso", "Benin"],
+    "Tunisie": ["Algerie", "Libye"],
+    "Zambie": ["Tanzanie", "Malawi", "Mozambique", "Zimbabwe", "Botswana", "Namibie", "Republique Democratique du Congo", "Angola"],
+    "Zimbabwe": ["Zambie", "Mozambique", "Afrique du Sud", "Botswana"]
+}
+
+
+
 test_graph = Graph(test_graph)
 test_graph_is_tree = Graph(test_graph_is_tree)
 test_graph2 = Graph(test_graph2)
 test_graph_dict = Graph(test_graph_dict)
+
+afrique_graph = Graph(afrique_graph)
 
 # test_graph.display_graph()
 # print(test_graph.BFS(start_node="A"))
@@ -57,16 +118,37 @@ test_graph_dict = Graph(test_graph_dict)
 print("-"*15)
 
 
-print(test_graph_dict.BFS(start_node="A"))
-print(f"Est ce que le graphe est un ARBRE ? -> {test_graph_dict.is_tree()}")
+print(afrique_graph.BFS(start_node="Algerie"))
+# print(f"Est ce que le graphe est un ARBRE ? -> {test_graph_dict.is_tree()}")
 
 # test_graph_dict.fermeture_transitive().display_graph()
 print("-"*15)
 
-test_graph_dict.visualize()
+afrique_graph.visualize()
 # test_graph_is_tree.fermeture_transitive().visualize()
-color_assignment = test_graph_dict.welsh_powell()
-print("Color assignment length:", color_assignment)
+color_assignment = afrique_graph.welsh_powell()
+print("Color assignment with welsh algo:", color_assignment)
+# color_assignment2= afrique_graph.dsatur_algo()
+# print("color assignmenet with DSATUR -> ",color_assignment)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # while not exit_program:
 #     print("Donner moi votre graphe d'abord ".center(20, "*"))

@@ -32,12 +32,8 @@ class Graph:
       laFile = deque()
       ordered_list = []
       laFile.append(start_node)
-      visited = {node: -1 for node in self.graph} # all values with -1
+      visited = {node: float('inf') for node in self.graph} # all values with -1
       visited[start_node] = 0
-
-      # visited = {
-      #    start_node: 0
-      #    }
 
       while len(laFile) > 0:
          racine = laFile.popleft()
@@ -45,21 +41,10 @@ class Graph:
          ordered_list.append(racine) # to stock the result of FIFO
 
          for voisin in self.graph[racine]:
-            if visited[voisin] == -1:
+            if visited[voisin] == float('inf'):
                laFile.append(voisin) # enfiler les voisins des racine precedant
                visited[voisin] = current_distance + 1
 
-      # inaccessible = False
-      # for node in visited.keys(): # when a node is not connected with the starting node
-      #    # if node not in visited:
-      #    if visited[node] == -1:
-      #       # visited[node] = 0
-      #       inaccessible = True
-
-      # print(f"-----> {ordered_list}")
-      # if inaccessible:
-      #    # print(f"Node -> {start_node} is inaccessible")
-      #    return f"Node -> {start_node} is inaccessible"
       print(f"ordered list -> {ordered_list}")
       return visited
 
@@ -115,23 +100,6 @@ class Graph:
       return new_graph
 
 
-#function to showing graph
-   def visualize(self, color_assignment=None):
-      G = nx.Graph()
-      for node, neighbors in self.graph.items():
-         for neighbor in neighbors:
-            G.add_edge(node, neighbor)
-      pos = nx.spring_layout(G)
-      # If color assignment is provided, use it; otherwise, use default colors
-      if color_assignment:
-         colors = [color_assignment[node] for node in G.nodes()]
-      else:
-         colors = "skyblue"  # Default color
-
-      nx.draw(G, pos, with_labels=True, node_size=500, node_color=colors, font_size=10, font_weight="bold", edge_color="grey")
-      plt.show()
-
-
 # todo -> print graph
 
    def visualize(self, color_assignment=None):
@@ -161,14 +129,13 @@ class Graph:
       color_assignment = {}  # Dictionnaire pour stocker la couleur assignée à chaque nœud
       color = 0  # Compteur de couleurs
 
-      # Processus de coloration
       for node in sorted_nodes:
          # Trouver les couleurs utilisées par les voisins
          neighbor_colors = {color_assignment[neighbor] for neighbor in self.graph[node] if neighbor in color_assignment}
 
          # Trouver la première couleur disponible
          while color in neighbor_colors:
-               color += 1
+            color += 1
 
          # Assigner la couleur trouvée au nœud actuel
          color_assignment[node] = color
@@ -176,9 +143,70 @@ class Graph:
          # Réinitialiser la couleur pour le prochain nœud
          color = 0
 
-      # Visualiser le graphe avec les couleurs assignées
+      self.visualize(color_assignment)
+      # print(type(color_assignment))
+      return color_assignment
+
+
+# todo-> DSATUR algorithm
+
+   def dsatur_algo(self):
+      # Step 1: Initialize data structures
+      color_assignment = {}
+      saturation_degree = {node: 0 for node in self.graph}  # Tracks saturation degree of each node
+
+      degree = {node: len(neighbors) for node, neighbors in self.graph.items()}  # Tracks the degree of each node
+      uncolored_nodes = set(self.graph.keys())  # Set of uncolored nodes
+
+      # Step 2: Start with the node with the highest degree
+      current_node = max(degree, key=degree.get)
+      color_assignment[current_node] = 0  # Assign the first color
+      uncolored_nodes.remove(current_node)  # Mark it as colored
+
+      # Update saturation degree for neighbors
+      for neighbor in self.graph[current_node]:
+         saturation_degree[neighbor] += 1
+
+      # Step 3: Main DSATUR loop
+      while uncolored_nodes:
+         # Find the node with the highest saturation degree (break ties with degree)
+         current_node = max(uncolored_nodes, key=lambda node: (saturation_degree[node], degree[node]))
+
+         # Find the lowest possible color not used by its neighbors
+         neighbor_colors = {color_assignment[neighbor] for neighbor in self.graph   [current_node] if neighbor in color_assignment}
+         color = 0
+         while color in neighbor_colors:
+            color += 1
+         color_assignment[current_node] = color  # Assign the chosen color
+
+         # Update the saturation degree of its neighbors
+         for neighbor in self.graph[current_node]:
+            if neighbor not in color_assignment:  # Only update for uncolored neighbors
+                  neighbor_colors = {color_assignment[n] for n in self.graph  [neighbor] if n in color_assignment}
+                  old_saturation = saturation_degree[neighbor]
+                  saturation_degree[neighbor] = len(neighbor_colors)  # Update with new saturation degree
+
+         # Mark the node as colored
+         uncolored_nodes.remove(current_node)
+
       self.visualize(color_assignment)
       return color_assignment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
       # def dfs2(self, start_node): # not completed
