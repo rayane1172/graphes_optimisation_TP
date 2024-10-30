@@ -45,7 +45,7 @@ class Graph:
                laFile.append(voisin) # enfiler les voisins des racine precedant
                visited[voisin] = current_distance + 1
 
-      print(f"ordered list -> {ordered_list}")
+      # print(f"ordered list -> {ordered_list}")
       return visited
 
 # todo: ////////////////////////////////////////////////////////
@@ -110,42 +110,43 @@ class Graph:
 
       pos = nx.spring_layout(G)
 
-      # If color assignment is provided, use it; otherwise, use default colors
+      # dictionnary of colors provided
       if color_assignment:
          colors = [color_assignment.get(node, -1) for node in G.nodes()]
+         # print(colors)
       else:
-         colors = "skyblue"  # Default color
+         colors = "skyblue"
 
-      nx.draw(G, pos, with_labels=True, node_size=500, node_color=colors, font_size=10, font_weight="bold", edge_color="grey")
+      nx.draw(G, pos, with_labels=True, node_size=700, node_color=colors, font_size=8, font_weight="bold", edge_color="grey")
       plt.show()
 
 
 # todo -> welsh and powel algorithm
 
    def welsh_powell(self):
-   # Trier les nœuds par degré décroissant
+   # sort the nodes
       sorted_nodes = sorted(self.graph, key=lambda node: len(self.graph[node]), reverse=True)
-
-      color_assignment = {}  # Dictionnaire pour stocker la couleur assignée à chaque nœud
-      color = 0  # Compteur de couleurs
+      # print(sorted_nodes)
+      nodes_color = {}
+      color = 0
 
       for node in sorted_nodes:
-         # Trouver les couleurs utilisées par les voisins
-         neighbor_colors = {color_assignment[neighbor] for neighbor in self.graph[node] if neighbor in color_assignment}
 
-         # Trouver la première couleur disponible
-         while color in neighbor_colors:
+         neighbor_colors = set()
+         for neighbor in self.graph[node]:
+            if neighbor in nodes_color:
+               neighbor_colors.add(nodes_color[neighbor])
+
+         while color in neighbor_colors: #Tq color used by neighbors
             color += 1
 
-         # Assigner la couleur trouvée au nœud actuel
-         color_assignment[node] = color
-
-         # Réinitialiser la couleur pour le prochain nœud
+         nodes_color[node] = color
+         #for next node
          color = 0
 
-      self.visualize(color_assignment)
-      # print(type(color_assignment))
-      return color_assignment
+      self.visualize(nodes_color)
+      # print(type(nodes_color))
+      return nodes_color
 
 
 # todo-> DSATUR algorithm
