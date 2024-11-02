@@ -102,7 +102,7 @@ class Graph:
 
 # todo -> print graph
 
-   def visualize(self, color_assignment=None):
+   def visualize(self, nodes_color=None):
       G = nx.Graph()
       for node, neighbors in self.graph.items():
          for neighbor in neighbors:
@@ -111,8 +111,8 @@ class Graph:
       pos = nx.spring_layout(G)
 
       # dictionnary of colors provided
-      if color_assignment:
-         colors = [color_assignment.get(node, -1) for node in G.nodes()]
+      if nodes_color:
+         colors = [nodes_color.get(node, -1) for node in G.nodes()]
          # print(colors)
       else:
          colors = "skyblue"
@@ -152,46 +152,46 @@ class Graph:
 # todo-> DSATUR algorithm
 
    def dsatur_algo(self):
-      # Step 1: Initialize data structures
-      color_assignment = {}
+      nodes_color = {} # todo -> dict for nodes colored
       saturation_degree = {node: 0 for node in self.graph}  # Tracks saturation degree of each node
 
       degree = {node: len(neighbors) for node, neighbors in self.graph.items()}  # Tracks the degree of each node
       uncolored_nodes = set(self.graph.keys())  # Set of uncolored nodes
 
-      # Step 2: Start with the node with the highest degree
-      current_node = max(degree, key=degree.get)
-      color_assignment[current_node] = 0  # Assign the first color
-      uncolored_nodes.remove(current_node)  # Mark it as colored
+      current_node = max(degree, key=degree.get) # node with highest degree (lot of neighbors)
+
+      nodes_color[current_node] = 0  # Assign the first color
+      uncolored_nodes.remove(current_node)
 
       # Update saturation degree for neighbors
       for neighbor in self.graph[current_node]:
          saturation_degree[neighbor] += 1
 
-      # Step 3: Main DSATUR loop
       while uncolored_nodes:
-         # Find the node with the highest saturation degree (break ties with degree)
+
+         #TODO: find the node with the highest saturation degree (if equal we choose the highest degree )
          current_node = max(uncolored_nodes, key=lambda node: (saturation_degree[node], degree[node]))
 
-         # Find the lowest possible color not used by its neighbors
-         neighbor_colors = {color_assignment[neighbor] for neighbor in self.graph   [current_node] if neighbor in color_assignment}
+         #todo -> Find the lowest possible color not used by its neighbors
+         neighbor_colors = {nodes_color[neighbor] for neighbor in self.graph   [current_node] if neighbor in nodes_color}
          color = 0
+
          while color in neighbor_colors:
             color += 1
-         color_assignment[current_node] = color  # Assign the chosen color
 
-         # Update the saturation degree of its neighbors
+         nodes_color[current_node] = color #todo -> give the color
+
+         #todo -> update the saturation degree of its neighbors
          for neighbor in self.graph[current_node]:
-            if neighbor not in color_assignment:  # Only update for uncolored neighbors
-                  neighbor_colors = {color_assignment[n] for n in self.graph  [neighbor] if n in color_assignment}
+            if neighbor not in nodes_color:  #todo -> only update for uncolored neighbors
+                  neighbor_colors = {nodes_color[n] for n in self.graph  [neighbor] if n in nodes_color}
                   old_saturation = saturation_degree[neighbor]
                   saturation_degree[neighbor] = len(neighbor_colors)  # Update with new saturation degree
 
-         # Mark the node as colored
-         uncolored_nodes.remove(current_node)
+         uncolored_nodes.remove(current_node) # node colored finally
 
-      self.visualize(color_assignment)
-      return color_assignment
+      self.visualize(nodes_color)
+      return nodes_color
 
 
 
