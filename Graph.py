@@ -153,7 +153,7 @@ class Graph:
 
    def dsatur_algo(self):
       nodes_color = {} # todo -> dict for nodes colored
-      saturation_degree = {node: 0 for node in self.graph}  # Tracks saturation degree of each node
+      saturation_degree = {node: 0 for node in self.graph}  # saturation degree of each node
 
       degree = {node: len(neighbors) for node, neighbors in self.graph.items()}  # Tracks the degree of each node
       uncolored_nodes = set(self.graph.keys())  # Set of uncolored nodes
@@ -168,25 +168,26 @@ class Graph:
          saturation_degree[neighbor] += 1
 
       while uncolored_nodes:
-
          #TODO: find the node with the highest saturation degree (if equal we choose the highest degree )
          current_node = max(uncolored_nodes, key=lambda node: (saturation_degree[node], degree[node]))
 
          #todo -> Find the lowest possible color not used by its neighbors
-         neighbor_colors = {nodes_color[neighbor] for neighbor in self.graph   [current_node] if neighbor in nodes_color}
+         neighbor_colors = {nodes_color[neighbor] for neighbor in self.graph[current_node] if neighbor in nodes_color}
+         #! set() of neighbors colors
+
          color = 0
+         # print(neighbor_colors)
 
          while color in neighbor_colors:
             color += 1
 
-         nodes_color[current_node] = color #todo -> give the color
+         nodes_color[current_node] = color #todo -> give it the color
 
          #todo -> update the saturation degree of its neighbors
          for neighbor in self.graph[current_node]:
-            if neighbor not in nodes_color:  #todo -> only update for uncolored neighbors
-                  neighbor_colors = {nodes_color[n] for n in self.graph  [neighbor] if n in nodes_color}
-                  old_saturation = saturation_degree[neighbor]
-                  saturation_degree[neighbor] = len(neighbor_colors)  # Update with new saturation degree
+            if neighbor not in nodes_color: # todo -> to update only uncolored neighbors
+               neighbor_colors = {nodes_color[node] for node in self.graph[neighbor] if node in nodes_color}
+               saturation_degree[neighbor] = len(neighbor_colors)
 
          uncolored_nodes.remove(current_node) # node colored finally
 

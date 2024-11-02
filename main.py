@@ -126,11 +126,11 @@ print("-"*15)
 
 afrique_graph.visualize()
 # test_graph_is_tree.fermeture_transitive().visualize()
-color_assignment = afrique_graph.welsh_powell()
+# color_assignment = afrique_graph.welsh_powell()
 # print("Color assignment with welsh algo:", color_assignment)
 
 
-# color_assignment2= afrique_graph.dsatur_algo()
+color_assignment2= afrique_graph.dsatur_algo()
 # print("color assignmenet with DSATUR -> ",color_assignment)
 
 
