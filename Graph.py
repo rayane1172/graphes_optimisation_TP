@@ -168,7 +168,7 @@ class Graph:
          saturation_degree[neighbor] += 1
 
       while uncolored_nodes:
-         #TODO: find the node with the highest saturation degree (if equal we choose the highest degree )
+         #todo -> find the node with the highest saturation degree (if equal we choose the highest degree )
          current_node = max(uncolored_nodes, key=lambda node: (saturation_degree[node], degree[node]))
 
          #todo -> Find the lowest possible color not used by its neighbors
@@ -208,34 +208,3 @@ class Graph:
 
 
 
-
-
-
-      # def dfs2(self, start_node): # not completed
-      #    stack = [] # empty stack
-      #    stack.append(start_node)
-      #    ordered_list = []
-      #    visited = {
-      #       start_node : 0
-      #    }
-
-      #    while len(stack) > 0:
-      #       racine = stack.pop()
-      #       ordered_list.append(racine)
-      #       current_distance = visited[racine]
-
-      #       for voisin in sorted(self.graph[racine], reverse=True):
-      #          if voisin not in visited:
-      #             stack.append(voisin)
-      #             visited[voisin] = current_distance + 1
-      #       inacessible = False
-      #       for node in self.graph.keys():
-      #          if node not in visited:
-      #             inacessible = True
-
-      #       if inacessible:
-      #          print(f"node { start_node} incaccessible ")
-      #    return visited
-      # return True
-      
-      
