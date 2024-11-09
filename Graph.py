@@ -195,16 +195,29 @@ class Graph:
       return nodes_color
 
 
+   def RLF(self):
 
+      nodes_colors = {}
+      color = 0
 
+      while len(nodes_colors)<len(self.graph):
+         uncolored_nodes = [node for node in self.graph if node not in nodes_colors]
+         independent_set = set() #todo -> everytime generate empty set to test again
 
+         while uncolored_nodes:
+            #todo -> find node with max not colored neighbors
+            node = max(uncolored_nodes,
+                  key=lambda anyNode: sum (1 for neighbor in self.graph[anyNode] if neighbor not in nodes_colors))
+            independent_set.add(node)
 
+            # todo -> remove it and his neighbors
+            uncolored_nodes = [n for n in uncolored_nodes if n != node and n not in self.graph[node]]
 
+         for node in independent_set:
+            nodes_colors[node] = color
 
+         color+=1
 
-
-
-
-
-
-
+      print(nodes_colors)
+      self.visualize(nodes_colors)
+      return nodes_colors

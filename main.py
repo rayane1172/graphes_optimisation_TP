@@ -165,8 +165,9 @@ mon_graph = read_graph_from_default_file()
 if mon_graph:
     # print(type(mon_graph))
     mon_graph.visualize()
-    color_assignment2= mon_graph.dsatur_algo()
-    print("color assignmenet with DSATUR -> ",color_assignment2)
+    # color_assignment2= mon_graph.dsatur_algo()
+    # print("color assignmenet with DSATUR -> ",color_assignment2)
+    mon_graph.RLF()
     
 else:
     print("Error")
