@@ -127,32 +127,33 @@ class Graph:
    # sort the nodes
       sorted_nodes = sorted(self.graph, key=lambda node: len(self.graph[node]), reverse=True)
       # print(sorted_nodes)
-      nodes_color = {}
+      nodes_colors = {}
       color = 0
 
       for node in sorted_nodes:
 
          neighbor_colors = set()
          for neighbor in self.graph[node]:
-            if neighbor in nodes_color:
-               neighbor_colors.add(nodes_color[neighbor])
+            if neighbor in nodes_colors:
+               neighbor_colors.add(nodes_colors[neighbor])
 
          while color in neighbor_colors: #Tq color used by neighbors
             color += 1
 
-         nodes_color[node] = color
+         nodes_colors[node] = color
          #for next node
          color = 0
 
-      self.visualize(nodes_color)
+      print(f"Number of colors :{max(nodes_colors.values())+1}")
+      self.visualize(nodes_colors)
       # print(type(nodes_color))
-      return nodes_color
+      return nodes_colors
 
 
 # todo-> DSATUR algorithm
 
    def dsatur_algo(self):
-      nodes_color = {} # todo -> dict for nodes colored
+      nodes_colors = {} # todo -> dict for nodes colored
       saturation_degree = {node: 0 for node in self.graph}  # saturation degree of each node
 
       degree = {node: len(neighbors) for node, neighbors in self.graph.items()}  # Tracks the degree of each node
@@ -160,7 +161,7 @@ class Graph:
 
       current_node = max(degree, key=degree.get) # node with highest degree (lot of neighbors)
 
-      nodes_color[current_node] = 0  # Assign the first color
+      nodes_colors[current_node] = 0  # Assign the first color
       uncolored_nodes.remove(current_node)
 
       # Update saturation degree for neighbors
@@ -172,7 +173,7 @@ class Graph:
          current_node = max(uncolored_nodes, key=lambda node: (saturation_degree[node], degree[node]))
 
          #todo -> Find the lowest possible color not used by its neighbors
-         neighbor_colors = {nodes_color[neighbor] for neighbor in self.graph[current_node] if neighbor in nodes_color}
+         neighbor_colors = {nodes_colors[neighbor] for neighbor in self.graph[current_node] if neighbor in nodes_colors}
          #! set() of neighbors colors
 
          color = 0
@@ -181,26 +182,29 @@ class Graph:
          while color in neighbor_colors:
             color += 1
 
-         nodes_color[current_node] = color #todo -> give it the color
+         nodes_colors[current_node] = color #todo -> give it the color
 
          #todo -> update the saturation degree of its neighbors
          for neighbor in self.graph[current_node]:
-            if neighbor not in nodes_color: # todo -> to update only uncolored neighbors
-               neighbor_colors = {nodes_color[node] for node in self.graph[neighbor] if node in nodes_color}
+            if neighbor not in nodes_colors: # todo -> to update only uncolored neighbors
+               neighbor_colors = {nodes_colors[node] for node in self.graph[neighbor] if node in nodes_colors}
                saturation_degree[neighbor] = len(neighbor_colors)
 
          uncolored_nodes.remove(current_node) # node colored finally
 
-      self.visualize(nodes_color)
-      return nodes_color
+      print(f"Number of colors :{max(nodes_colors.values())+1}")
+      self.visualize(nodes_colors)
+      return nodes_colors
 
+
+# todo -> recursive largest first algorithm
 
    def RLF(self):
 
       nodes_colors = {}
       color = 0
 
-      while len(nodes_colors)<len(self.graph):
+      while len(nodes_colors)<len(self.graph): #todo -> WH all nodes are colored
          uncolored_nodes = [node for node in self.graph if node not in nodes_colors]
          independent_set = set() #todo -> everytime generate empty set to test again
 
@@ -218,6 +222,7 @@ class Graph:
 
          color+=1
 
-      print(nodes_colors)
+      nbr_color = max(nodes_colors.values()) + 1
+      print(f"Number of color is :{nbr_color} ")
       self.visualize(nodes_colors)
       return nodes_colors

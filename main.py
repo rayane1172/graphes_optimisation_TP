@@ -1,4 +1,3 @@
-from collections import deque
 from Graph import Graph
 
 exit_program = False
@@ -143,11 +142,10 @@ import json
 from Graph import Graph
 import os
 
-def read_graph_from_default_file():
 
+def read_graph_from_default_file():
     file_name = 'graph_data.json'  # file name
     file_path = os.path.join(os.path.dirname(__file__), file_name)
-
     try:
         with open(file_path, 'r') as file:
             graph_dict = json.load(file)
@@ -167,8 +165,10 @@ if mon_graph:
     mon_graph.visualize()
     # color_assignment2= mon_graph.dsatur_algo()
     # print("color assignmenet with DSATUR -> ",color_assignment2)
+
     mon_graph.RLF()
-    
+    mon_graph.dsatur_algo()
+    mon_graph.welsh_powell()
 else:
     print("Error")
 
