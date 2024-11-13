@@ -134,10 +134,6 @@ print("-"*15)
 
 
 
-
-
-
-
 import json
 from Graph import Graph
 import os
@@ -156,7 +152,6 @@ def read_graph_from_default_file():
     except json.JSONDecodeError:
         print("Error: The file is not in valid JSON format.")
         return None
-
 
 mon_graph = read_graph_from_default_file()
 

@@ -214,7 +214,7 @@ class Graph:
                   key=lambda anyNode: sum (1 for neighbor in self.graph[anyNode] if neighbor not in nodes_colors))
             independent_set.add(node)
 
-            # todo -> remove it and his neighbors
+            # todo -> remove it and their neighbors
             uncolored_nodes = [n for n in uncolored_nodes if n != node and n not in self.graph[node]]
 
          for node in independent_set:
