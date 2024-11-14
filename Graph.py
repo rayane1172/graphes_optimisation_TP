@@ -97,6 +97,7 @@ class Graph:
             for voisin in self.graph[current]:
                if voisin not in self.graph[node]:
                   new_graph.add_edge(node,voisin)
+      new_graph.visualize()
       return new_graph
 
 
