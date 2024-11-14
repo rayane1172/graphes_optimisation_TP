@@ -205,13 +205,19 @@ class Graph:
       color = 0
 
       while len(nodes_colors)<len(self.graph): #todo -> WH all nodes are colored
+
          uncolored_nodes = [node for node in self.graph if node not in nodes_colors]
          independent_set = set() #todo -> everytime generate empty set to test again
 
          while uncolored_nodes:
             #todo -> find node with max not colored neighbors
-            node = max(uncolored_nodes,
-                  key=lambda anyNode: sum (1 for neighbor in self.graph[anyNode] if neighbor not in nodes_colors))
+            node = max(
+                  uncolored_nodes,
+                  key=lambda anyNode: (
+                        sum(1 for neighbor in self.graph[anyNode] if neighbor not in nodes_colors),  #first condition
+                        sum(1 for neighbor in self.graph[anyNode] if neighbor in nodes_colors)      #second condition
+                  )
+               )
             independent_set.add(node)
 
             # todo -> remove it and their neighbors
