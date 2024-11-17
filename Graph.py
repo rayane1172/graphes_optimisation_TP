@@ -216,7 +216,7 @@ class Graph:
                   uncolored_nodes,
                   key=lambda anyNode: (
                         sum(1 for neighbor in self.graph[anyNode] if neighbor not in nodes_colors),  #first condition
-                        sum(1 for neighbor in self.graph[anyNode] if neighbor in nodes_colors)      #second condition
+                        sum(len(self.graph[neighbor]) for neighbor in self.graph[anyNode])     #second condition (plus grand somme des degree des voisins du chaque node)
                   )
                )
             independent_set.add(node)
