@@ -20,7 +20,9 @@ class OrdonanceurMPM:
         # Calcul des dates au plus tôt (dates_plus_tot)
         for node in self.taches:
             for pred in self.predecesseurs.get(node, []):
-                dates_plus_tot[node] = max(dates_plus_tot[node], dates_plus_tot[pred] + self.taches[pred]["duree"])
+                # todo -> compare with current value and new value calculated
+                dates_plus_tot[node] = max(dates_plus_tot[node],
+                                           dates_plus_tot[pred] + self.taches[pred]["duree"])
         return dates_plus_tot
 
     def calculer_dates_plus_tard(self, dates_plus_tot):
@@ -34,7 +36,6 @@ class OrdonanceurMPM:
                 dates_plus_tard[node] = duree_projet - self.taches[node]["duree"]
             else:
                 dates_plus_tard[node] = (min(dates_plus_tard[s] for s in successeurs) - self.taches[node]["duree"])
-
         return dates_plus_tard
 
     def calculer_marges(self, dates_plus_tot, dates_plus_tard):
@@ -46,8 +47,9 @@ class OrdonanceurMPM:
             marges_totales[node] = dates_plus_tard[node] - dates_plus_tot[node]
 
             successeurs = [n for n, preds in self.predecesseurs.items() if node in preds]
+            # todo -> if current task ('node') is a predecessor of task 'n' return it as successor
             if successeurs:
-                marges_libres[node] = min(dates_plus_tot[s] for s in successeurs) - (dates_plus_tot[node] + self.taches[node]["duree"])
+                marges_libres[node] = min(dates_plus_tot[s] - dates_plus_tot[node] - self.taches[node]["duree"] for s in successeurs)
             else:
                 marges_libres[node] = marges_totales[node]
 
