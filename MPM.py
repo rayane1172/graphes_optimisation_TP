@@ -3,12 +3,28 @@ import matplotlib.pyplot as plt
 from tkinter import *
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
+from tkinter import ttk
 
 
 class OrdonanceurMPM:
     def __init__(self):
-        self.taches = {}  # Dictionnaire pour les tâches
-        self.predecesseurs = {}  # Dictionnaire pour les predecesseurs
+        # self.taches = {}  # Dictionnaire pour les tâches
+        # self.predecesseurs = {}  # Dictionnaire pour les predecesseurs
+        self.taches = {
+            "A": {"duree": 3},
+            "B": {"duree": 2},
+            "C": {"duree": 4},
+            "D": {"duree": 1},
+        }
+
+        # Define predecessors for each task
+        self.predecesseurs = {
+            "A": [],  # A has no predecessors
+            "B": ["A"],  # B depends on A
+            "C": ["A"],  # C depends on A
+            "D": ["B", "C"],  # D depends on B and C
+        }
+
 
     def ajouter_tache(self, tache, duree, predecesseurs=[]):
         self.taches[tache] = {"duree": duree}
@@ -142,29 +158,41 @@ class InterfaceMPM:
             self.canvas.get_tk_widget().pack()
 
     def mettre_a_jour_affichage(self, dates_plus_tot, dates_plus_tard, marges_totales, marges_libres, chemin_critique):
-        # Création des données du tableau
-        donnees = []
+        # Clear previous table
+        for widget in self.cadre_tableau.winfo_children():
+            widget.destroy()
+
+        # Create Treeview widget
+        columns = ("Tâche", "Durée", "Date au plus tôt", "Date au plus tard", "Marge totale", "Marge libre", "Critique")
+        tree = ttk.Treeview(self.cadre_tableau, columns=columns, show="headings", height=15)
+
+        # Define column headings
+        for col in columns:
+            tree.heading(col, text=col)
+            tree.column(col, width=100, anchor="center")  # Adjust width as needed
+
+        # Add data to Treeview
         for node in self.ordonnanceur.taches:
-            donnees.append(
-                {
-                    "Tâche": node,
-                    "Durée": self.ordonnanceur.taches[node]["duree"],
-                    "Date au plus tôt": dates_plus_tot[node],
-                    "Date au plus tard": dates_plus_tard[node],
-                    "Marge totale": marges_totales[node],
-                    "Marge libre": marges_libres[node],
-                    "Critique": node in chemin_critique,
-                }
+            tree.insert(
+                "",
+                "end",
+                values=(
+                    node,
+                    self.ordonnanceur.taches[node]["duree"],
+                    dates_plus_tot[node],
+                    dates_plus_tard[node],
+                    marges_totales[node],
+                    marges_libres[node],
+                    "Oui" if node in chemin_critique else "Non",
+                ),
             )
 
-        # Affichage dans le tableau
-        df = pd.DataFrame(donnees)
-        tableau = Text(self.cadre_tableau)
-        tableau.delete("1.0", END)
-        tableau.insert(END, "Tableau des tâches:\n\n")
-        tableau.insert(END, df.to_string())
-        tableau.insert(END, "\n\nChemin critique: " + " -> ".join(chemin_critique))
-        tableau.pack()
+        # Pack the Treeview
+        tree.pack(expand=True, fill="both")
+
+        # show at the bottom "chemin critique"
+        chemin_label = Label(self.cadre_tableau, text="Chemin critique: " + " -> ".join(chemin_critique), font=("Arial", 12))
+        chemin_label.pack(pady=5)
 
 
 root = Tk()
