@@ -6,25 +6,48 @@ import pandas as pd
 from tkinter import ttk
 
 
-class OrdonanceurMPM:
+class MPM:
     def __init__(self):
-        # self.taches = {}  # Dictionnaire pour les tâches
-        # self.predecesseurs = {}  # Dictionnaire pour les predecesseurs
+        self.taches = {}  # Dictionnaire pour les tâches
+        self.predecesseurs = {}  # Dictionnaire pour les predecesseurs
         self.taches = {
-            "A": {"duree": 3},
-            "B": {"duree": 2},
-            "C": {"duree": 4},
-            "D": {"duree": 1},
+            "DEBUT": {"duree": 0},
+            "A": {"duree": 10},
+            "B": {"duree": 25},
+            "C": {"duree": 25},
+            "D": {"duree": 20},
+            "E": {"duree": 35},
+            "F": {"duree": 20},
+            "G": {"duree": 25},
+            "H": {"duree": 15},
+            "I": {"duree": 40},
+            "J": {"duree": 30},
+            "K": {"duree": 20},
+            "L": {"duree": 40},
+            "M": {"duree": 10},
+            "N": {"duree": 15},
+            "FIN": {"duree": 0},
         }
 
         # Define predecessors for each task
         self.predecesseurs = {
-            "A": [],  # A has no predecessors
-            "B": ["A"],  # B depends on A
-            "C": ["A"],  # C depends on A
-            "D": ["B", "C"],  # D depends on B and C
+            "DEBUT": [],
+            "A": ["DEBUT"],
+            "B": ["A"],
+            "C": ["B", "E", "G"],
+            "D": ["DEBUT"],
+            "E": ["DEBUT"],
+            "F": ["E", "G"],
+            "G": ["A", "D"],
+            "H": ["E"],
+            "I": ["DEBUT"],
+            "J": ["C", "F", "H"],
+            "K": ["B", "E", "G"],
+            "L": ["J", "M"],
+            "M": ["K", "N"],
+            "N": ["A"],
+            "FIN": ["L"],
         }
-
 
     def ajouter_tache(self, tache, duree, predecesseurs=[]):
         self.taches[tache] = {"duree": duree}
@@ -33,40 +56,56 @@ class OrdonanceurMPM:
     def calculer_dates_plus_tot(self):
         dates_plus_tot = {node: 0 for node in self.taches}
 
-        # Calcul des dates au plus tôt (dates_plus_tot)
         for node in self.taches:
             for pred in self.predecesseurs.get(node, []):
                 # todo -> compare with current value and new value calculated
-                dates_plus_tot[node] = max(dates_plus_tot[node],
-                                           dates_plus_tot[pred] + self.taches[pred]["duree"])
+                dates_plus_tot[node] = max(
+                    dates_plus_tot[node],
+                    dates_plus_tot[pred] + self.taches[pred]["duree"],
+                )
         return dates_plus_tot
 
     def calculer_dates_plus_tard(self, dates_plus_tot):
         dates_plus_tard = {}
-        duree_projet = max(dates_plus_tot[node] + self.taches[node]["duree"] for node in self.taches)
+        duree_projet = max(
+            dates_plus_tot[node] + self.taches[node]["duree"] for node in self.taches
+        )
+        # duree_projet = dates_plus_tot["E"] + self.taches["E"]["duree"]
+        # print(duree_projet)
 
-        # Calcul des dates au plus tard (dates_plus_tard)
         for node in reversed(list(self.taches)):
-            successeurs = [n for n, preds in self.predecesseurs.items() if node in preds]
-            if not successeurs:
+            # print(f"-----> {node}")
+            successeurs = [
+                n for n, preds in self.predecesseurs.items() if node in preds
+            ]
+            if not successeurs:  # node fin : duree ta3o zero
                 dates_plus_tard[node] = duree_projet - self.taches[node]["duree"]
             else:
-                dates_plus_tard[node] = (min(dates_plus_tard[s] for s in successeurs) - self.taches[node]["duree"])
+                dates_plus_tard[node] = (
+                    min(dates_plus_tard[s] for s in successeurs)
+                    - self.taches[node]["duree"]
+                )
         return dates_plus_tard
 
     def calculer_marges(self, dates_plus_tot, dates_plus_tard):
         marges_totales = {}
         marges_libres = {}
 
-        # Calcul des marges
         for node in self.taches:
             marges_totales[node] = dates_plus_tard[node] - dates_plus_tot[node]
 
-            successeurs = [n for n, preds in self.predecesseurs.items() if node in preds]
+            successeurs = [
+                n for n, preds in self.predecesseurs.items() if node in preds
+            ]
             # todo -> if current task ('node') is a predecessor of task 'n' return it as successor
             if successeurs:
-                marges_libres[node] = min(dates_plus_tot[s] - dates_plus_tot[node] - self.taches[node]["duree"] for s in successeurs)
-            else:
+                marges_libres[node] = min(
+                    dates_plus_tot[s]
+                    - dates_plus_tot[node]
+                    - self.taches[node]["duree"]
+                    for s in successeurs
+                )
+            else:  # node fin
                 marges_libres[node] = marges_totales[node]
 
         return marges_totales, marges_libres
@@ -90,7 +129,7 @@ class InterfaceMPM:
         self.cadre_tableau = Frame(root)
         self.cadre_tableau.pack(side=RIGHT, padx=10)
 
-        self.ordonnanceur = OrdonanceurMPM()
+        self.ordonnanceur = MPM()
         self.creer_widgets()
 
     def creer_widgets(self):
@@ -117,16 +156,26 @@ class InterfaceMPM:
     def ajouter_tache(self):
         id_tache = self.id_tache.get()
         duree = int(self.duree.get())
-        predecesseurs = (self.predecesseurs.get().split(",") if self.predecesseurs.get() else [] )
+        predecesseurs = (
+            self.predecesseurs.get().split(",") if self.predecesseurs.get() else []
+        )
         self.ordonnanceur.ajouter_tache(id_tache, duree, predecesseurs)
         self.dessiner_graphe()
 
     def calculer(self):
         dates_plus_tot = self.ordonnanceur.calculer_dates_plus_tot()
         dates_plus_tard = self.ordonnanceur.calculer_dates_plus_tard(dates_plus_tot)
-        marges_totales, marges_libres = self.ordonnanceur.calculer_marges(dates_plus_tot, dates_plus_tard)
+        marges_totales, marges_libres = self.ordonnanceur.calculer_marges(
+            dates_plus_tot, dates_plus_tard
+        )
         chemin_critique = self.ordonnanceur.trouver_chemin_critique(marges_totales)
-        self.mettre_a_jour_affichage(dates_plus_tot, dates_plus_tard, marges_totales, marges_libres, chemin_critique)
+        self.mettre_a_jour_affichage(
+            dates_plus_tot,
+            dates_plus_tard,
+            marges_totales,
+            marges_libres,
+            chemin_critique,
+        )
 
     def dessiner_graphe(self):
         plt.clf()
@@ -157,14 +206,31 @@ class InterfaceMPM:
             self.canvas = FigureCanvasTkAgg(figure, self.cadre_graphe)
             self.canvas.get_tk_widget().pack()
 
-    def mettre_a_jour_affichage(self, dates_plus_tot, dates_plus_tard, marges_totales, marges_libres, chemin_critique):
+    def mettre_a_jour_affichage(
+        self,
+        dates_plus_tot,
+        dates_plus_tard,
+        marges_totales,
+        marges_libres,
+        chemin_critique,
+    ):
         # Clear previous table
         for widget in self.cadre_tableau.winfo_children():
             widget.destroy()
 
         # Create Treeview widget
-        columns = ("Tâche", "Durée", "Date au plus tôt", "Date au plus tard", "Marge totale", "Marge libre", "Critique")
-        tree = ttk.Treeview(self.cadre_tableau, columns=columns, show="headings", height=15)
+        columns = (
+            "Tâche",
+            "Durée",
+            "Date au plus tôt",
+            "Date au plus tard",
+            "Marge totale",
+            "Marge libre",
+            "Critique",
+        )
+        tree = ttk.Treeview(
+            self.cadre_tableau, columns=columns, show="headings", height=15
+        )
 
         # Define column headings
         for col in columns:
@@ -172,7 +238,7 @@ class InterfaceMPM:
             tree.column(col, width=100, anchor="center")  # Adjust width as needed
 
         # Add data to Treeview
-        for node in self.ordonnanceur.taches:
+        for node in list(self.ordonnanceur.taches)[1:-1]:
             tree.insert(
                 "",
                 "end",
@@ -186,12 +252,15 @@ class InterfaceMPM:
                     "Oui" if node in chemin_critique else "Non",
                 ),
             )
-
         # Pack the Treeview
         tree.pack(expand=True, fill="both")
 
         # show at the bottom "chemin critique"
-        chemin_label = Label(self.cadre_tableau, text="Chemin critique: " + " -> ".join(chemin_critique), font=("Arial", 12))
+        chemin_label = Label(
+            self.cadre_tableau,
+            text="Chemin critique: " + " -> ".join(chemin_critique),
+            font=("Arial", 12),
+        )
         chemin_label.pack(pady=5)
 
 
