@@ -11,43 +11,43 @@ class MPM:
         self.taches = {}  # Dictionnaire pour les tâches
         self.predecesseurs = {}  # Dictionnaire pour les predecesseurs
         self.niveaux = {}
-        self.taches = {
-            "A": {"duree": 10},
-            "B": {"duree": 25},
-            "C": {"duree": 25},
-            "D": {"duree": 20},
-            "E": {"duree": 35},
-            "F": {"duree": 20},
-            "G": {"duree": 25},
-            "H": {"duree": 15},
-            "I": {"duree": 40},
-            "J": {"duree": 30},
-            "K": {"duree": 20},
-            "L": {"duree": 40},
-            "M": {"duree": 10},
-            "N": {"duree": 15},
-        }
+        # self.taches = {
+        #     "A": {"duree": 10},
+        #     "B": {"duree": 25},
+        #     "C": {"duree": 25},
+        #     "D": {"duree": 20},
+        #     "E": {"duree": 35},
+        #     "F": {"duree": 20},
+        #     "G": {"duree": 25},
+        #     "H": {"duree": 15},
+        #     "I": {"duree": 40},
+        #     "J": {"duree": 30},
+        #     "K": {"duree": 20},
+        #     "L": {"duree": 40},
+        #     "M": {"duree": 10},
+        #     "N": {"duree": 15},
+        # }
 
-        # Define predecessors for each task
-        self.predecesseurs = {
-            "A": [],
-            "B": ["A"],
-            "C": ["B", "E", "G"],
-            "D": [],
-            "E": [],
-            "F": ["E", "G"],
-            "G": ["A", "D"],
-            "H": ["E"],
-            "I": [],
-            "J": ["C", "F", "H"],
-            "K": ["B", "E", "G"],
-            "L": ["J", "M"],
-            "M": ["K", "N"],
-            "N": ["A"],
-        }
+        # # Define predecessors for each task
+        # self.predecesseurs = {
+        #     "A": [],
+        #     "B": ["A"],
+        #     "C": ["B", "E", "G"],
+        #     "D": [],
+        #     "E": [],
+        #     "F": ["E", "G"],
+        #     "G": ["A", "D"],
+        #     "H": ["E"],
+        #     "I": [],
+        #     "J": ["C", "F", "H"],
+        #     "K": ["B", "E", "G"],
+        #     "L": ["J", "M"],
+        #     "M": ["K", "N"],
+        #     "N": ["A"],
+        # }
 
     def calculer_niveaux(self):
-        # Initialize levels
+
         self.niveaux = {}
 
         #todo -> level 0 tasks
@@ -61,17 +61,17 @@ class MPM:
             changed = False
             for task in self.taches:
                 if task not in self.niveaux:
-                    # Check if all predecessors have levels assigned
+                    #todo -> verifier si tout les predecesseur ayant assignee avec niveaux
                     if all(pred in self.niveaux for pred in self.predecesseurs[task]):
-                        # Task's level is max level of predecessors + 1
-                        self.niveaux[task] = (max(
-                                [self.niveaux[pred] for pred in self.predecesseurs[task]],default=-1) + 1)
+                        # todo -> niveaux c'est max + 1
+                        self.niveaux[task] = (max([self.niveaux[pred] for pred in self.predecesseurs[task]],default=-1) + 1)
                         changed = True
 
     def complet_graph(self):
         self.calculer_niveaux()
+        print("before levels : ",self.niveaux)
+        # todo ->  add node debut and it's secesseurs
 
-        # todo ->  add node debut
         start_tasks = [task for task in self.taches if not self.predecesseurs[task]]
         if start_tasks:
             if "DEBUT" not in self.taches:
@@ -93,7 +93,7 @@ class MPM:
                 self.predecesseurs["FIN"] = end_tasks
 
         self.calculer_niveaux()
-        # print("taches ss -> ", self.taches)
+        print("after levels : ",self.niveaux)
         return self.taches
 
     def ajouter_tache(self, tache, duree, predecesseurs=[]):
@@ -122,7 +122,7 @@ class MPM:
         # duree_projet = dates_plus_tot["E"] + self.taches["E"]["duree"]
         # print(duree_projet)
 
-        for node in sorted(self.taches.keys(), key=lambda x: -self.niveaux.get(x, 0)):
+        for node in sorted(self.taches.keys(), key=lambda x: self.niveaux.get(x, 0),reverse=True):
             successeurs = [
                 n for n, preds in self.predecesseurs.items() if node in preds
             ]
