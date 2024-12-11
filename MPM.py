@@ -11,40 +11,40 @@ class MPM:
         self.taches = {}  # Dictionnaire pour les tâches
         self.predecesseurs = {}  # Dictionnaire pour les predecesseurs
         self.niveaux = {}
-        # self.taches = {
-        #     "A": {"duree": 10},
-        #     "B": {"duree": 25},
-        #     "C": {"duree": 25},
-        #     "D": {"duree": 20},
-        #     "E": {"duree": 35},
-        #     "F": {"duree": 20},
-        #     "G": {"duree": 25},
-        #     "H": {"duree": 15},
-        #     "I": {"duree": 40},
-        #     "J": {"duree": 30},
-        #     "K": {"duree": 20},
-        #     "L": {"duree": 40},
-        #     "M": {"duree": 10},
-        #     "N": {"duree": 15},
-        # }
+        self.taches = {
+            "A": {"duree": 10},
+            "B": {"duree": 25},
+            "C": {"duree": 25},
+            "D": {"duree": 20},
+            "E": {"duree": 35},
+            "F": {"duree": 20},
+            "G": {"duree": 25},
+            "H": {"duree": 15},
+            "I": {"duree": 40},
+            "J": {"duree": 30},
+            "K": {"duree": 20},
+            "L": {"duree": 40},
+            "M": {"duree": 10},
+            "N": {"duree": 15},
+        }
 
-        # # Define predecessors for each task
-        # self.predecesseurs = {
-        #     "A": [],
-        #     "B": ["A"],
-        #     "C": ["B", "E", "G"],
-        #     "D": [],
-        #     "E": [],
-        #     "F": ["E", "G"],
-        #     "G": ["A", "D"],
-        #     "H": ["E"],
-        #     "I": [],
-        #     "J": ["C", "F", "H"],
-        #     "K": ["B", "E", "G"],
-        #     "L": ["J", "M"],
-        #     "M": ["K", "N"],
-        #     "N": ["A"],
-        # }
+        # Define predecessors for each task
+        self.predecesseurs = {
+            "A": [],
+            "B": ["A"],
+            "C": ["B", "E", "G"],
+            "D": [],
+            "E": [],
+            "F": ["E", "G"],
+            "G": ["A", "D"],
+            "H": ["E"],
+            "I": [],
+            "J": ["C", "F", "H"],
+            "K": ["B", "E", "G"],
+            "L": ["J", "M"],
+            "M": ["K", "N"],
+            "N": ["A"],
+        }
 
     def calculer_niveaux(self):
 
