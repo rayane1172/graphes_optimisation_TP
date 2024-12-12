@@ -11,6 +11,7 @@ class MPM:
         self.taches = {}  # Dictionnaire pour les tâches
         self.predecesseurs = {}  # Dictionnaire pour les predecesseurs
         self.niveaux = {}
+        # insert manually the graph
         self.taches = {
             "A": {"duree": 10},
             "B": {"duree": 25},
@@ -28,7 +29,6 @@ class MPM:
             "N": {"duree": 15},
         }
 
-        # Define predecessors for each task
         self.predecesseurs = {
             "A": [],
             "B": ["A"],
@@ -46,11 +46,29 @@ class MPM:
             "N": ["A"],
         }
 
+
+    def detecter_cycle(self):
+        # Créer un graphe orienté avec NetworkX
+        G = nx.DiGraph()
+        for tache, preds in self.predecesseurs.items():
+            for pred in preds:
+                G.add_edge(pred, tache)  # Ajouter les arêtes orientées
+
+        try:
+            # Vérifie si le graphe contient un cycle
+            cycle = nx.find_cycle(G, orientation="original")
+            print("Cycle détecté :", cycle)
+            return True
+        except nx.NetworkXNoCycle:
+            # Aucun cycle détecté
+            print("Aucun cycle détecté.")
+            return False
+
     def calculer_niveaux(self):
 
         self.niveaux = {}
 
-        #todo -> level 0 tasks
+        # todo -> level 0 tasks
         for task in self.taches:
             if not self.predecesseurs[task]:
                 self.niveaux[task] = 0
@@ -61,7 +79,7 @@ class MPM:
             changed = False
             for task in self.taches:
                 if task not in self.niveaux:
-                    #todo -> verifier si tout les predecesseur ayant assignee avec niveaux
+                    # todo -> verifier si tout les predecesseur ayant assignee avec niveaux
                     if all(pred in self.niveaux for pred in self.predecesseurs[task]):
                         # todo -> niveaux c'est max + 1
                         self.niveaux[task] = (max([self.niveaux[pred] for pred in self.predecesseurs[task]],default=-1) + 1)
@@ -173,22 +191,19 @@ class MPM:
             else:
                 # Find all possible next critical tasks
                 for next_task in critical_tasks:
-                    # Avoid cycles
+                    # avoid cycle in graph
                     if next_task not in path:
-                        # Ensure the next_task is a valid successor of the current task
+                        # ensure the next_task is a valid successor of the current task
                         if current in self.predecesseurs.get(next_task, []):
-                            # Recursively find all paths
+                            # recursively
                             find_all_paths(next_task, end, path, all_paths, critical_tasks)
 
-        # Identify all critical tasks (those with zero margin)
+        # critical task
         critical_tasks = [node for node, marge in marges_totales.items() if marge == 0]
-        # Initialize a list to store all critical paths
         all_critical_paths = []
 
-        # Start finding paths from 'DEBUT' to 'FIN'
         find_all_paths("DEBUT", "FIN", [], all_critical_paths, critical_tasks)
 
-        # Return the list of all critical paths
         return all_critical_paths
 
 
@@ -230,6 +245,8 @@ class InterfaceMPM:
         Button(self.cadre_saisie, text="Calculer", command=self.calculer).grid(
             row=0, column=7
         )
+        self.message_erreur = Label(self.cadre_saisie, text="", fg="red")
+        self.message_erreur.grid(row=1, column=0, columnspan=8)
 
     def ajouter_tache(self):
         id_tache = self.id_tache.get()
@@ -241,6 +258,15 @@ class InterfaceMPM:
         self.dessiner_graphe()
 
     def calculer(self):
+        self.message_erreur.config(text="")
+
+        # verification of cycles
+        if self.ordonnanceur.detecter_cycle():
+            self.message_erreur.config(
+                text="Erreur : Un cycle a été détecté dans le graphe."
+            )
+            return
+
         dates_plus_tot = self.ordonnanceur.calculer_dates_plus_tot()
         dates_plus_tard = self.ordonnanceur.calculer_dates_plus_tard(dates_plus_tot)
         marges_totales, marges_libres = self.ordonnanceur.calculer_marges(dates_plus_tot, dates_plus_tard)
@@ -253,11 +279,10 @@ class InterfaceMPM:
             chemin_critique,
         )
 
-    def dessiner_graphe(self):
+    def dessiner_graphe(self): #todo -> verify cycle with libray networkx
         plt.clf()
         G = nx.DiGraph()
 
-        # Création des noeuds et des arêtes du graphe
         for tache, data in self.ordonnanceur.taches.items():
             G.add_node(tache, duree=data["duree"])
         for tache, predecesseurs in self.ordonnanceur.predecesseurs.items():
@@ -315,8 +340,8 @@ class InterfaceMPM:
 
         # Add data to Treeview
         for node in list(self.ordonnanceur.taches):
-            if node != "DEBUT" and node != "FIN":
-                tree.insert(
+            # if node != "DEBUT" and node != "FIN":
+            tree.insert(
                     "",
                     "end",
                     values=(

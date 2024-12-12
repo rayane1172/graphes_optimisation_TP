@@ -14,51 +14,6 @@
    "13":["1","7","8"]
 }
 
-self.taches = {
-            "DEBUT":{"duree": 0},
-            "A": {"duree": 10},
-            "B": {"duree": 25},
-            "C": {"duree": 25},
-            "D": {"duree": 20},
-            "E": {"duree": 35},
-            "F": {"duree": 20},
-            "G": {"duree": 25},
-            "H": {"duree": 15},
-            "I": {"duree": 40},
-            "J": {"duree": 30},
-            "K": {"duree": 20},
-            "L": {"duree": 40},
-            "M": {"duree": 10},
-            "N": {"duree": 15},
-            "FIN":{"duree":0}
-        }
-
-        # Define predecessors for each task
-        self.predecesseurs = {
-            "DEBUT": [],
-            "A": ["DEBUT"],  # A has no predecessors
-            "B": ["A"],  # B depends on A
-            "C": ["B","E","G"],  # C depends on A
-            "D": ["DEBUT"],  # D depends on B and C
-            "E": ["DEBUT"],
-            "F": ["E","G"],  # A has no predecessors
-            "G": ["A","D"],  # B depends on A
-            "H": ["E"],  # B depends on A
-            "I": ["DEBUT"],  # C depends on A
-            "J": ["C","F","H"],  # D depends on B and C
-            "K": ["B","E","G"],
-            "L": ["J","M"],  # A has no predecessors
-            "M": ["K","N"],  # B depends on A
-            "N": ["A"],  # C depends on A
-            "FIN": ["L"]
-        }
-
-
-
-
-
-
-        // 
 
         self.taches = {
             "A": {"duree": 10},
